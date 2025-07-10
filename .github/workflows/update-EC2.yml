@@ -21,7 +21,7 @@ jobs:
       - name: Send SSM Command to EC2
         run: |
           aws ssm send-command \
-            --instance-ids i-01d97a06fdd70609e \
+            --instance-ids ${{ github.event.inputs.instance-id }} \
             --document-name "AWS-RunPatchBaseline" \
             --comment "Update system" \
             --parameters '{"Operation":["Install"]}' \
