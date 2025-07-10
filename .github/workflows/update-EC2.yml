@@ -11,13 +11,6 @@ jobs:
     runs-on: [self-hosted, test]
 
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
       - name: Send SSM Command to EC2
         run: |
           aws ssm send-command \
@@ -28,18 +21,6 @@ jobs:
             --timeout-seconds 600 \
             --query "Command.CommandId" \
             --output text
-
-      - name: Send email with status
-        if: always()  # Ensures it runs whether job succeeds or fails
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.office365.com
-          server_port: 587
-          subject: "EC2 Update Job - ${{ job.status }}"
-          body: |
-            EC2 instance update completed with status: ${{ job.status }}
-            Instance ID: ${{ github.event.inputs.instance-id }}
-          to: malkawiaseel@live.com
 
       # - name: Get Command ID
       #   id: command
